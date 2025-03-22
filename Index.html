@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prishu PDF to Image</title>
+  <style>
+    /* Custom CSS for Neomorphism Design */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #e0e5ec;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .container {
+      background: #e0e5ec;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 9px 9px 16px rgba(163, 177, 198, 0.6), -9px -9px 16px rgba(255, 255, 255, 0.5);
+      width: 90%;
+      max-width: 800px;
+      text-align: center;
+      margin: 2rem 0;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      font-weight: 600;
+    }
+    input[type="file"] {
+      display: none;
+    }
+    .upload-label {
+      background: #e0e5ec;
+      color: #333;
+      padding: 12px 24px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 1rem;
+      display: inline-block;
+      box-shadow: 4px 4px 8px rgba(163, 177, 198, 0.6), -4px -4px 8px rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+    }
+    .upload-label:hover {
+      box-shadow: inset 4px 4px 8px rgba(163, 177, 198, 0.6), inset -4px -4px 8px rgba(255, 255, 255, 0.5);
+    }
+    .file-name {
+      margin-bottom: 1.5rem;
+      font-size: 14px;
+      color: #555;
+    }
+    .convert-btn {
+      background: #e0e5ec;
+      color: #333;
+      padding: 12px 24px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 1.5rem;
+      display: inline-block;
+      box-shadow: 4px 4px 8px rgba(163, 177, 198, 0.6), -4px -4px 8px rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+      border: none;
+      outline: none;
+    }
+    .convert-btn:hover {
+      box-shadow: inset 4px 4px 8px rgba(163, 177, 198, 0.6), inset -4px -4px 8px rgba(255, 255, 255, 0.5);
+    }
+    .reset-btn {
+      background: #e0e5ec;
+      color: #333;
+      padding: 12px 24px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 1.5rem;
+      display: inline-block;
+      box-shadow: 4px 4px 8px rgba(163, 177, 198, 0.6), -4px -4px 8px rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+      border: none;
+      outline: none;
+    }
+    .reset-btn:hover {
+      box-shadow: inset 4px 4px 8px rgba(163, 177, 198, 0.6), inset -4px -4px 8px rgba(255, 255, 255, 0.5);
+    }
+    .progress-container {
+      width: 100%;
+      background: #e0e5ec;
+      border-radius: 15px;
+      margin: 1.5rem 0;
+      overflow: hidden;
+      box-shadow: inset 4px 4px 8px rgba(163, 177, 198, 0.6), inset -4px -4px 8px rgba(255, 255, 255, 0.5);
+    }
+    .progress-bar {
+      width: 0%;
+      height: 10px;
+      background: linear-gradient(90deg, #007bff, #00bfff);
+      border-radius: 15px;
+      transition: width 0.3s ease;
+    }
+    .result-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      background: #e0e5ec;
+      border-radius: 15px;
+      box-shadow: 4px 4px 8px rgba(163, 177, 198, 0.6), -4px -4px 8px rgba(255, 255, 255, 0.5);
+    }
+    .result-table th, .result-table td {
+      padding: 12px;
+      text-align: center;
+    }
+    .result-table th {
+      background: #007bff;
+      color: #fff;
+      font-weight: 600;
+      border-radius: 15px 15px 0 0;
+    }
+    .result-table td {
+      background: #e0e5ec;
+      border-radius: 0 0 15px 15px;
+    }
+    .preview-img {
+      max-width: 100px;
+      max-height: 100px;
+      border-radius: 10px;
+      box-shadow: 4px 4px 8px rgba(163, 177, 198, 0.6), -4px -4px 8px rgba(255, 255, 255, 0.5);
+    }
+    .download-btn {
+      background: #e0e5ec;
+      color: #333;
+      padding: 8px 16px;
+      border-radius: 15px;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 4px 4px 8px rgba(163, 177, 198, 0.6), -4px -4px 8px rgba(255, 255, 255, 0.5);
+      transition: all 0.3s ease;
+    }
+    .download-btn:hover {
+      box-shadow: inset 4px 4px 8px rgba(163, 177, 198, 0.6), inset -4px -4px 8px rgba(255, 255, 255, 0.5);
+    }
+    .emoji {
+      font-size: 20px;
+    }
+    /* Content Sections */
+    .content-section {
+      background: #e0e5ec;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 9px 9px 16px rgba(163, 177, 198, 0.6), -9px -9px 16px rgba(255, 255, 255, 0.5);
+      width: 90%;
+      max-width: 800px;
+      margin: 2rem 0;
+      text-align: left;
+    }
+    .content-section h2 {
+      color: #ff0000; /* Red for topics */
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    .content-section h3 {
+      color: #008000; /* Green for subtopics */
+      font-size: 1.4rem;
+      margin-bottom: 0.8rem;
+    }
+    .content-section p {
+      color: #0000ff; /* Blue for descriptions */
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+    .faq-section {
+      background: #e0e5ec;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 9px 9px 16px rgba(163, 177, 198, 0.6), -9px -9px 16px rgba(255, 255, 255, 0.5);
+      width: 90%;
+      max-width: 800px;
+      margin: 2rem 0;
+      text-align: left;
+    }
+    .faq-section h2 {
+      color: #ff0000; /* Red for topics */
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    .faq-section h3 {
+      color: #008000; /* Green for subtopics */
+      font-size: 1.4rem;
+      margin-bottom: 0.8rem;
+    }
+    .faq-section p {
+      color: #0000ff; /* Blue for descriptions */
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- PDF to Image Tool -->
+  <div class="container">
+    <h1>📄 Prishu PDF to Image 🖼️</h1>
+    <label for="pdf-input" class="upload-label">📤 Upload PDF</label>
+    <input type="file" id="pdf-input" accept="application/pdf">
+    <div class="file-name" id="file-name"></div>
+    <button class="convert-btn" id="convert-btn" disabled>🔧 Convert to Image</button>
+    <button class="reset-btn" id="reset-btn" disabled>🔄 Convert Another PDF</button>
+    <div class="progress-container">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <table class="result-table" id="result-table">
+      <thead>
+        <tr>
+          <th>Page</th>
+          <th>Preview</th>
+          <th>Status</th>
+          <th>Download</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Results will be populated here -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Content Sections -->
+  <div class="content-section">
+    <h2>Why We Chose It</h2>
+    <h3>Ease of Use</h3>
+    <p>This tool is designed to be simple and intuitive, allowing users to convert PDFs to images with just a few clicks.</p>
+    <h3>High-Quality Output</h3>
+    <p>The tool ensures that the converted images retain the quality of the original PDF pages.</p>
+    <h3>Free and Accessible</h3>
+    <p>It is completely free to use and works on any device with a modern web browser.</p>
+  </div>
+
+  <div class="content-section">
+    <h2>How It Works</h2>
+    <h3>Upload PDF</h3>
+    <p>Users can upload a PDF file by clicking the "Upload PDF" button.</p>
+    <h3>Convert to Image</h3>
+    <p>Once the PDF is uploaded, the tool converts each page into an image format (e.g., PNG).</p>
+    <h3>Download Images</h3>
+    <p>Users can preview and download each image individually.</p>
+  </div>
+
+  <div class="content-section">
+    <h2>How to Use</h2>
+    <h3>Step 1: Upload PDF</h3>
+    <p>Click the "Upload PDF" button and select the PDF file you want to convert.</p>
+    <h3>Step 2: Convert</h3>
+    <p>Click the "Convert to Image" button to start the conversion process.</p>
+    <h3>Step 3: Download</h3>
+    <p>Once the conversion is complete, download the images using the provided links.</p>
+  </div>
+
+  <!-- FAQ Section -->
+  <div class="faq-section">
+    <h2>Frequently Asked Questions (FAQs)</h2>
+    <h3>Is this tool free to use?</h3>
+    <p>Yes, this tool is completely free to use.</p>
+    <h3>What image formats are supported?</h3>
+    <p>The tool currently supports PNG format for the converted images.</p>
+    <h3>Can I convert multiple PDFs at once?</h3>
+    <p>No, the tool currently supports converting one PDF at a time.</p>
+    <h3>Is my data safe?</h3>
+    <p>Yes, all processing is done locally in your browser, and no data is uploaded to any server.</p>
+  </div>
+
+  <script>
+    // JavaScript for handling PDF to Image conversion
+    const pdfInput = document.getElementById('pdf-input');
+    const convertBtn = document.getElementById('convert-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const resultTableBody = document.querySelector('#result-table tbody');
+    const fileNameDisplay = document.getElementById('file-name');
+
+    let file = null;
+
+    pdfInput.addEventListener('change', (event) => {
+      file = event.target.files[0];
+      if (file) {
+        convertBtn.disabled = false; // Enable the Convert button
+        fileNameDisplay.textContent = `Selected File: ${file.name}`; // Display the file name
+      } else {
+        fileNameDisplay.textContent = ''; // Clear the file name if no file is selected
+      }
+    });
+
+    convertBtn.addEventListener('click', async () => {
+      if (!file) return;
+
+      // Reset progress bar and table
+      progressBar.style.width = '0%';
+      resultTableBody.innerHTML = '';
+
+      // Simulate upload progress
+      simulateProgress(0, 100, 20, async () => {
+        await convertPdfToImage(file);
+        resetBtn.disabled = false; // Enable the Reset button
+      });
+    });
+
+    resetBtn.addEventListener('click', () => {
+      // Reset the tool
+      pdfInput.value = ''; // Clear the file input
+      file = null; // Clear the file
+      convertBtn.disabled = true; // Disable the Convert button
+      resetBtn.disabled = true; // Disable the Reset button
+      fileNameDisplay.textContent = ''; // Clear the file name
+      progressBar.style.width = '0%'; // Reset the progress bar
+      resultTableBody.innerHTML = ''; // Clear the result table
+    });
+
+    function simulateProgress(start, end, duration, callback) {
+      let current = start;
+      const increment = (end - start) / (duration / 10);
+      const timer = setInterval(() => {
+        current += increment;
+        progressBar.style.width = `${current}%`;
+        if (current >= end) {
+          clearInterval(timer);
+          callback();
+        }
+      }, 10);
+    }
+
+    async function convertPdfToImage(file) {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const pdfData = new Uint8Array(e.target.result);
+        const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+        const numPages = pdf.numPages;
+
+        for (let i = 1; i <= numPages; i++) {
+          const page = await pdf.getPage(i);
+          const scale = 1.5;
+          const viewport = page.getViewport({ scale });
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+
+          await page.render({ canvasContext: context, viewport }).promise;
+          const imageUrl = canvas.toDataURL('image/png');
+
+          // Display result in table
+          resultTableBody.innerHTML += `
+            <tr>
+              <td>Page ${i}</td>
+              <td><img src="${imageUrl}" class="preview-img" alt="Page ${i} Preview"></td>
+              <td><span class="emoji">✅</span> Conversion Completed!</td>
+              <td><a href="${imageUrl}" download="page-${i}.png" class="download-btn">📥 Download Image</a></td>
+            </tr>
+          `;
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+</body>
+</html>
